@@ -26,7 +26,6 @@ public class User {
     @Size(min = 8, message = "Password must be at least 8 characters long.")
     private String password;
 
-    // Profile Information
     @Min(value = 1, message = "Age must be a positive number.")
     private int age;
 
@@ -42,7 +41,6 @@ public class User {
     @NotBlank(message = "Activity level is required.")
     private String activityLevel;
 
-    // Goals
     @NotBlank(message = "Primary goal is required.")
     private String primaryGoal;
 
@@ -51,7 +49,6 @@ public class User {
     private double targetCarbs;
     private double targetFat;
 
-    // Dietary Information
     private List<String> dietaryPreferences;
     private List<String> allergies;
 }
