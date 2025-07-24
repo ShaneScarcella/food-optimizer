@@ -1,0 +1,54 @@
+package com.shanescarcella.api.user;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.List;
+
+@Data
+@Builder
+@Document(collection = "users")
+public class User {
+
+    @Id
+    private String id;
+
+    @NotBlank(message = "Email is required.")
+    @Email(message = "Email should be valid.")
+    private String email;
+
+    @NotBlank(message = "Password is required.")
+    @Size(min = 8, message = "Password must be at least 8 characters long.")
+    private String password;
+
+    @Min(value = 1, message = "Age must be a positive number.")
+    private int age;
+
+    @NotBlank(message = "Gender is required.")
+    private String gender;
+
+    @Min(value = 1, message = "Height must be a positive number.")
+    private double height;
+
+    @Min(value = 1, message = "Weight must be a positive number.")
+    private double currentWeight;
+
+    @NotBlank(message = "Activity level is required.")
+    private String activityLevel;
+
+    @NotBlank(message = "Primary goal is required.")
+    private String primaryGoal;
+
+    private double targetCalories;
+    private double targetProtein;
+    private double targetCarbs;
+    private double targetFat;
+
+    private List<String> dietaryPreferences;
+    private List<String> allergies;
+}
