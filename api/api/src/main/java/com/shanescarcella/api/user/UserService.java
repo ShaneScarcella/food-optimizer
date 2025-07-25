@@ -12,7 +12,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User createUser(User user) {
-        // TODO: Add check to see if user email already exists
+        userRepository.findByEmail(user.getEmail()).ifPresent(s -> {
+            throw new IllegalStateException("Email already in use.");
+        });
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
