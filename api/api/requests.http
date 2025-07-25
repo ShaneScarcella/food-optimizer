@@ -1,0 +1,14 @@
+### Register a new user
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "imperialuser@example.com",
+  "password": "password123",
+  "age": 35,
+  "gender": "Male",
+  "heightInches": 70,
+  "weightPounds": 185,
+  "activityLevel": "active",
+  "primaryGoal": "muscle gain"
+}

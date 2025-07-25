@@ -33,10 +33,10 @@ public class User {
     private String gender;
 
     @Min(value = 1, message = "Height must be a positive number.")
-    private double height;
+    private double heightInches;
 
     @Min(value = 1, message = "Weight must be a positive number.")
-    private double currentWeight;
+    private double weightPounds;
 
     @NotBlank(message = "Activity level is required.")
     private String activityLevel;
