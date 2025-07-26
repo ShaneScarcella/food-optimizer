@@ -3,12 +3,12 @@ POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "imperialuser@example.com",
+  "email": "testuser@example.com",
   "password": "password123",
-  "age": 35,
+  "age": 25,
   "gender": "Male",
-  "heightInches": 70,
-  "weightPounds": 185,
+  "heightInches": 60,
+  "weightPounds": 150,
   "activityLevel": "active",
   "primaryGoal": "muscle gain"
 }

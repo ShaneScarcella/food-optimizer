@@ -22,4 +22,9 @@ public class AuthController {
         userService.createUser(user);
         return ResponseEntity.ok("User registered successfully!");
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.login(loginRequest));
+    }
 }
