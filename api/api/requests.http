@@ -12,3 +12,12 @@ Content-Type: application/json
   "activityLevel": "active",
   "primaryGoal": "muscle gain"
 }
+
+### Login as an existing user
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "imperialuser@example.com",
+  "password": "password123"
+}
