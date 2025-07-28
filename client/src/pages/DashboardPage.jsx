@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function DashboardPage() {
   const { logout } = useAuth();
@@ -13,6 +13,9 @@ function DashboardPage() {
   return (
     <div>
       <h1>Dashboard</h1>
+      <nav>
+        <Link to="/profile">Edit Profile</Link>
+      </nav>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );
