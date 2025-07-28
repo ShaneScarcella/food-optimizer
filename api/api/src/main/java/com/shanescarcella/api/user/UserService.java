@@ -41,12 +41,26 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
 
         var userDetails = org.springframework.security.core.userdetails.User
-            .withUsername(user.getEmail())
-            .password(user.getPassword())
-            .authorities(java.util.Collections.emptyList())
-            .build();
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .authorities(java.util.Collections.emptyList())
+                .build();
 
         var jwtToken = jwtService.generateToken(userDetails);
         return new LoginResponse(jwtToken);
+    }
+
+    public User updateUserProfile(String email, User updates) {
+        User existingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("User not found."));
+
+        existingUser.setAge(updates.getAge());
+        existingUser.setGender(updates.getGender());
+        existingUser.setHeightInches(updates.getHeightInches());
+        existingUser.setWeightPounds(updates.getWeightPounds());
+        existingUser.setActivityLevel(updates.getActivityLevel());
+        existingUser.setPrimaryGoal(updates.getPrimaryGoal());
+
+        return userRepository.save(existingUser);
     }
 }
