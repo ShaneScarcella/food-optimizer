@@ -1,6 +1,7 @@
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import FoodSearch from '../components/FoodSearch';
+import CreateFoodForm from '../components/CreateFoodForm';
 
 function DashboardPage() {
   const { logout } = useAuth();
@@ -17,12 +18,13 @@ function DashboardPage() {
       <nav>
         <Link to="/profile">Edit Profile</Link>
       </nav>
-      
+
       <button onClick={handleLogout}>Logout</button>
 
       <hr />
 
       <FoodSearch />
+      <CreateFoodForm />
     </div>
   );
 }
