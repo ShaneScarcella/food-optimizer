@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import apiClient from '../services/apiService';
 
-function FoodSearch() {
+function FoodSearch({ onFoodLogged }) { // <-- Accept the new function as a prop
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState('');
@@ -14,6 +14,26 @@ function FoodSearch() {
       setSearchResults(response.data);
     } catch (err) {
       setError('Failed to search for foods.');
+      console.error(err);
+    }
+  };
+
+  const handleLogFood = async (food) => {
+    const entry = {
+      foodId: food.id,
+      name: food.name,
+      servingQty: 1, // Default serving of 1, can be adjusted later
+      servingSize: food.servingSize,
+      calories: food.calories
+    };
+
+    try {
+      await apiClient.post('/logs/entry', entry);
+      onFoodLogged();
+      setSearchResults([]);
+      setSearchTerm('');
+    } catch (err) {
+      setError('Failed to log food.');
       console.error(err);
     }
   };
@@ -34,7 +54,8 @@ function FoodSearch() {
       <div>
         {searchResults.map(food => (
           <div key={food.id}>
-            <p>{food.name} - {food.calories} kcal</p>
+            <span>{food.name} - {food.calories} kcal</span>
+            <button onClick={() => handleLogFood(food)}>Log</button>
           </div>
         ))}
       </div>
