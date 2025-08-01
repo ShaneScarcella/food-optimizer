@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import FoodSearch from '../components/FoodSearch';
 import CreateFoodForm from '../components/CreateFoodForm';
 import apiClient from '../services/apiService';
+import DailyLog from '../components/DailyLog';
 
 function DashboardPage() {
   const { logout } = useAuth();
@@ -43,6 +44,7 @@ function DashboardPage() {
 
       <hr />
 
+      <DailyLog />
       <FoodSearch />
       <CreateFoodForm />
     </div>
