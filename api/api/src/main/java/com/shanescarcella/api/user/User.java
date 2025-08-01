@@ -51,4 +51,6 @@ public class User {
 
     private List<String> dietaryPreferences;
     private List<String> allergies;
+
+    private List<String> pantryItems;
 }
