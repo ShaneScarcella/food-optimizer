@@ -28,7 +28,7 @@ public class MealPlanService {
         for (String day : days) {
             // 3 meals a day (change later if needed)
             List<Meal> meals = new ArrayList<>();
-            double dailyCalorieTarget = user.getTargetCalories();
+            double dailyCalorieTarget = user.getTargetCalories() > 0 ? user.getTargetCalories() : 2000.0;
             double caloriesPerMeal = dailyCalorieTarget / 3;
 
             for (String mealName : List.of("Breakfast", "Lunch", "Dinner")) {
