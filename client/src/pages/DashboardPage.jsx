@@ -41,7 +41,7 @@ function DashboardPage() {
     <div>
       <h1>Dashboard - Welcome, {userProfile.email}!</h1>
       <nav>
-        <Link to="/profile">Edit Profile</Link> | <Link to="/pantry">My Pantry</Link>
+        <Link to="/profile">Edit Profile</Link> | <Link to="/pantry">My Pantry</Link> | <Link to="/meal-plan">Meal Plan</Link>
       </nav>
       <button onClick={handleLogout}>Logout</button>
       <hr />

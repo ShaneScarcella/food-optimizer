@@ -36,6 +36,10 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/meal-plan"
+          element={<ProtectedRoute><MealPlanPage /></ProtectedRoute>}
+        />
       </Routes>
     </BrowserRouter>
   );
