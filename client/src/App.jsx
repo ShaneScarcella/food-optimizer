@@ -5,6 +5,7 @@ import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './pages/ProfilePage';
 import PantryPage from './pages/PantryPage';
+import MealPlanPage from './pages/MealPlanPage';
 
 function App() {
   return (
