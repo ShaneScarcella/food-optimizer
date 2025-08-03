@@ -20,6 +20,10 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
+    - name: Grant execute permission to mvnw
+      working-directory: ./api/api
+      run: chmod +x mvnw
+
     - name: Build and test with Maven
       working-directory: ./api/api
       run: ./mvnw test --batch-mode
