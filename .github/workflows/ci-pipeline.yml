@@ -21,4 +21,5 @@ jobs:
         distribution: 'temurin'
 
     - name: Build and test with Maven
-      run: ./mvnw test --batch-mode --file ./api/api/pom.xml
+      working-directory: ./api/api
+      run: ./mvnw test --batch-mode
