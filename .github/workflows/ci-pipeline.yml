@@ -10,6 +10,11 @@ jobs:
   build-and-test-backend:
     runs-on: ubuntu-latest
 
+    env:
+      SPRING_DATA_MONGODB_URI: mongodb://localhost/testdb
+      APPLICATION_SECURITY_JWT_SECRET_KEY: a-very-secure-test-key-that-is-long-enough-for-the-algorithm
+      APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
