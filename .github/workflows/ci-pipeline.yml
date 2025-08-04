@@ -32,3 +32,15 @@ jobs:
     - name: Build and test with Maven
       working-directory: ./api/api
       run: ./mvnw test --batch-mode
+
+    - name: Scan for vulnerable dependencies
+      uses: anchore/scan-action@v3
+      with:
+        path: "${{ github.workspace }}/api/api"
+        fail-build: false
+
+    - name: Perform static code analysis with SonarCloud
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
