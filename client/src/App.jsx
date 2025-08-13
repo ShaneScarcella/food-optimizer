@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from './pages/ProfilePage';
 import PantryPage from './pages/PantryPage';
 import MealPlanPage from './pages/MealPlanPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 
 function App() {
   return (
@@ -40,6 +41,10 @@ function App() {
         <Route
           path="/meal-plan"
           element={<ProtectedRoute><MealPlanPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/analytics"
+          element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>}
         />
       </Routes>
     </BrowserRouter>
