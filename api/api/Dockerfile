@@ -11,6 +11,10 @@ RUN mvn clean package -DskipTests
 
 # Stage 2: Create the final image with a full JDK
 FROM eclipse-temurin:21-jdk
+
+# Install the trusted CA certificates required for SSL connections
+RUN apt-get update && apt-get install -y ca-certificates
+
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
