@@ -25,25 +25,49 @@ resource "aws_security_group" "food-optimizer-sg" {
   name        = "food-optimizer-sg"
   description = "Allow SSH and HTTP inbound traffic"
 
+  # SSH access
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allows SSH from any IP address
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "SSH access"
   }
 
+  # HTTP access
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allows HTTP from any IP address
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTP access"
   }
 
+  # Frontend application port
+  ingress {
+    from_port   = 5173
+    to_port     = 5173
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Frontend application"
+  }
+
+  # Backend API port
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Backend API"
+  }
+
+  # Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1" # "-1" means all protocols
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All outbound traffic"
   }
 }
 
@@ -71,4 +95,12 @@ resource "aws_instance" "food-optimizer-server" {
 
 output "instance_ip" {
   value = aws_instance.food-optimizer-server.public_ip
+}
+
+output "frontend_url" {
+  value = "http://${aws_instance.food-optimizer-server.public_ip}:5173"
+}
+
+output "backend_url" {
+  value = "http://${aws_instance.food-optimizer-server.public_ip}:8080"
 }
