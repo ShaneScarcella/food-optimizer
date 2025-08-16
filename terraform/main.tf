@@ -23,7 +23,7 @@ provider "aws" {
 
 resource "aws_security_group" "food-optimizer-sg" {
   name        = "food-optimizer-sg"
-  description = "Allow SSH and HTTP inbound traffic"
+  description = "Allow SSH, HTTP, and application ports inbound traffic"
 
   # SSH access
   ingress {
@@ -34,7 +34,7 @@ resource "aws_security_group" "food-optimizer-sg" {
     description = "SSH access"
   }
 
-  # HTTP access
+  # Standard HTTP
   ingress {
     from_port   = 80
     to_port     = 80
@@ -146,7 +146,7 @@ EOL
     connection {
       type        = "ssh"
       user        = "ec2-user"
-      private_key = file("./food-optimizer-key.pem")  # Adjust path to your key file
+      private_key = file("C:/Users/sscar/.ssh/id_rsa")
       host        = self.public_ip
     }
   }
