@@ -69,6 +69,23 @@ resource "aws_security_group" "food-optimizer-sg" {
     cidr_blocks = ["0.0.0.0/0"]
     description = "All outbound traffic"
   }
+
+  tags = {
+    Name = "food-optimizer-sg"
+  }
+}
+
+# Define variables for sensitive data
+variable "mongodb_uri" {
+  description = "MongoDB connection URI"
+  type        = string
+  sensitive   = true
+}
+
+variable "jwt_secret" {
+  description = "JWT secret key"
+  type        = string
+  sensitive   = true
 }
 
 # Define the AWS server (EC2 Instance)
@@ -82,14 +99,56 @@ resource "aws_instance" "food-optimizer-server" {
   user_data = <<-EOF
                 #!/bin/bash
                 yum update -y
-                yum install -y docker
+                yum install -y docker git libxcrypt-compat
                 systemctl start docker
                 systemctl enable docker
                 usermod -aG docker ec2-user
+                
+                # Install docker-compose
+                curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                chmod +x /usr/local/bin/docker-compose
+                
+                # Wait for docker to be ready
+                sleep 30
+                
+                # Clone repository as ec2-user
+                su - ec2-user -c "
+                  cd /home/ec2-user
+                  git clone https://github.com/ShaneScarcella/food-optimizer.git
+                  cd food-optimizer
+                  git checkout develop
+                  
+                  # Create .env file
+                  cat > .env << 'EOL'
+SPRING_DATA_MONGODB_URI=${var.mongodb_uri}
+SPRING_DATA_MONGODB_DATABASE=food-optimizer-db
+APPLICATION_SECURITY_JWT_SECRET_KEY=${var.jwt_secret}
+APPLICATION_SECURITY_JWT_EXPIRATION=86400000
+EOL
+                  
+                  # Start the application
+                  docker-compose up --build -d
+                "
                 EOF
 
   tags = {
     Name = "food-optimizer-server"
+  }
+
+  # Wait for the instance to be ready before considering it complete
+  provisioner "remote-exec" {
+    inline = [
+      "echo 'Waiting for application to start...'",
+      "timeout 300 bash -c 'until docker ps | grep food-optimizer; do sleep 5; done'",
+      "echo 'Application containers are running!'"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = file("./food-optimizer-key.pem")  # Adjust path to your key file
+      host        = self.public_ip
+    }
   }
 }
 
