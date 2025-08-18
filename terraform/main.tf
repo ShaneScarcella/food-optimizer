@@ -96,40 +96,10 @@ resource "aws_instance" "food-optimizer-server" {
 
   vpc_security_group_ids = [aws_security_group.food-optimizer-sg.id]
 
-  user_data = <<-EOF
-                #!/bin/bash
-                yum update -y
-                yum install -y docker git libxcrypt-compat
-                systemctl start docker
-                systemctl enable docker
-                usermod -aG docker ec2-user
-                
-                # Install docker-compose
-                curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                chmod +x /usr/local/bin/docker-compose
-                
-                # Wait for docker to be ready
-                sleep 30
-                
-                # Clone repository as ec2-user
-                su - ec2-user -c "
-                  cd /home/ec2-user
-                  git clone https://github.com/ShaneScarcella/food-optimizer.git
-                  cd food-optimizer
-                  git checkout develop
-                  
-                  # Create .env file
-                  cat > .env << 'EOL'
-SPRING_DATA_MONGODB_URI=${var.mongodb_uri}
-SPRING_DATA_MONGODB_DATABASE=food-optimizer-db
-APPLICATION_SECURITY_JWT_SECRET_KEY=${var.jwt_secret}
-APPLICATION_SECURITY_JWT_EXPIRATION=86400000
-EOL
-                  
-                  # Start the application
-                  docker-compose up --build -d
-                "
-                EOF
+  user_data = base64encode(templatefile("${path.module}/user_data.sh", {
+    mongodb_uri = var.mongodb_uri
+    jwt_secret  = var.jwt_secret
+  }))
 
   tags = {
     Name = "food-optimizer-server"
@@ -138,9 +108,13 @@ EOL
   # Wait for the instance to be ready before considering it complete
   provisioner "remote-exec" {
     inline = [
-      "echo 'Waiting for application to start...'",
-      "timeout 300 bash -c 'until docker ps | grep food-optimizer; do sleep 5; done'",
-      "echo 'Application containers are running!'"
+      "echo 'Waiting for Docker to be ready...'",
+      "timeout 60 bash -c 'until command -v docker &> /dev/null; do sleep 5; done'",
+      "echo 'Waiting for application setup to complete...'",
+      "timeout 300 bash -c 'until [ -f /home/ec2-user/setup-complete ]; do sleep 10; done'",
+      "echo 'Setup complete! Checking application status...'",
+      "docker ps",
+      "echo 'Application should be running now!'"
     ]
 
     connection {
