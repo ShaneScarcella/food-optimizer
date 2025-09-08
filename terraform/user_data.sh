@@ -66,8 +66,11 @@ Requires=docker.service
 [Service]
 Type=oneshot
 User=ec2-user
+Group=docker
+ExecStartPre=/bin/bash -c 'until docker info &>/dev/null; do sleep 5; done'
 ExecStart=/home/ec2-user/setup-app.sh
 RemainAfterExit=true
+Environment=HOME=/home/ec2-user
 
 [Install]
 WantedBy=multi-user.target
