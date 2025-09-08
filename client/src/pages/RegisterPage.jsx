@@ -58,6 +58,7 @@ function RegisterPage() {
         <select name="primaryGoal" value={formData.primaryGoal} onChange={handleChange}>
           <option value="weight loss">Weight Loss</option>
           <option value="weight maintenance">Weight Maintenance</option>
+          <option value="weight gain">Weight Gain</option>
           <option value="muscle gain">Muscle Gain</option>
         </select>
 
