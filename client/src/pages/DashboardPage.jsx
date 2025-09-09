@@ -39,7 +39,7 @@ function DashboardPage() {
 
   return (
     <div>
-      <h1>Dashboard - Welcome, {userProfile.email}!</h1>
+      <h1>Dashboard - Welcome, {userProfile.firstName}!</h1>
       <nav>
         <Link to="/profile">Edit Profile</Link>
         {' | '}
