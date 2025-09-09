@@ -2,7 +2,6 @@ package com.shanescarcella.api.dailylog;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
