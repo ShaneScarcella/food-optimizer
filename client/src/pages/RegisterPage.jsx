@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
+    firstName: '',
     email: '',
     password: '',
     age: '',
@@ -41,6 +42,7 @@ function RegisterPage() {
     <div>
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
+        <input type="name" name="name" value={formData.email} onChange={handleChange} placeholder="First Name" required />
         <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
         <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" required />
         <input type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" required />
