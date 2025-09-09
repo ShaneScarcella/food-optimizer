@@ -20,12 +20,13 @@ public class DailyLogController {
     private final UserRepository userRepository;
 
     @PostMapping("/entry")
-    public ResponseEntity<DailyLog> addFoodEntry(Authentication authentication, @RequestBody Entry entry) {
+    public ResponseEntity<DailyLog> addFoodEntry(Authentication authentication, @RequestBody AddEntryRequest request) {
         String userEmail = authentication.getName();
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
 
-        DailyLog updatedLog = dailyLogService.addEntryToLog(user.getId(), entry);
+        LocalDate localDate = LocalDate.parse(request.date()); // Date in "YYYY-MM-DD" format
+        DailyLog updatedLog = dailyLogService.addEntryToLog(user.getId(), request.entry(), localDate);
         return ResponseEntity.ok(updatedLog);
     }
 

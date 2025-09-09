@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import apiClient from '../services/apiService';
 
-function FoodSearch({ onFoodLogged }) { // <-- Accept the new function as a prop
+function FoodSearch({ onFoodLogged }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState('');
@@ -27,8 +27,10 @@ function FoodSearch({ onFoodLogged }) { // <-- Accept the new function as a prop
       calories: food.calories
     };
 
+    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+
     try {
-      await apiClient.post('/logs/entry', entry);
+      await apiClient.post('/logs/entry', { entry: entry, date: today });
       onFoodLogged();
       setSearchResults([]);
       setSearchTerm('');
