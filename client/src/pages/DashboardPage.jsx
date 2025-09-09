@@ -7,7 +7,6 @@ import DailyLog from '../components/DailyLog';
 import apiClient from '../services/apiService';
 
 function DashboardPage() {
-  const { logout } = useAuth();
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState(null);
   const [logRefreshKey, setLogRefreshKey] = useState(0); // Key to force re-render of DailyLog
@@ -40,17 +39,9 @@ function DashboardPage() {
   return (
     <div>
       <h1>Dashboard - Welcome, {userProfile.firstName}!</h1>
-      <nav>
-        <Link to="/profile">Edit Profile</Link>
-        {' | '}
-        <Link to="/pantry">My Pantry</Link>
-        {' | '}
-        <Link to="/meal-plan">Meal Plan</Link>
-        {' | '}
-        <Link to="/analytics">Analytics</Link>
-      </nav>
-      <button onClick={handleLogout}>Logout</button>
+      
       <hr />
+
       <DailyLog key={logRefreshKey} />
       <FoodSearch onFoodLogged={handleFoodLogged} />
       <CreateFoodForm />

@@ -7,46 +7,49 @@ import ProfilePage from './pages/ProfilePage';
 import PantryPage from './pages/PantryPage';
 import MealPlanPage from './pages/MealPlanPage';
 import AnalyticsPage from './pages/AnalyticsPage';
+import Layout from './components/Layout';
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/pantry"
-          element={
-            <ProtectedRoute>
-              <PantryPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/meal-plan"
-          element={<ProtectedRoute><MealPlanPage /></ProtectedRoute>}
-        />
-        <Route
-          path="/analytics"
-          element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>}
-        />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pantry"
+            element={
+              <ProtectedRoute>
+                <PantryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/meal-plan"
+            element={<ProtectedRoute><MealPlanPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/analytics"
+            element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>}
+          />
+        </Routes>
+      </Layout>
     </BrowserRouter>
   );
 }
