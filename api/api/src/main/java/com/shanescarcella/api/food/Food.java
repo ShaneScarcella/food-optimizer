@@ -33,4 +33,6 @@ public class Food {
 
     // "100g", "1 cup", "1 piece"
     private String servingSize;
+
+    private String createdByUserId;
 }

@@ -1,8 +1,11 @@
 package com.shanescarcella.api.food;
 
+import com.shanescarcella.api.user.User;
+import com.shanescarcella.api.user.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,16 +16,25 @@ import java.util.List;
 public class FoodController {
 
     private final FoodService foodService;
+    private final UserRepository userRepository;
 
     @GetMapping("/search")
-    public ResponseEntity<List<Food>> searchFoods(@RequestParam String name) {
-        List<Food> foods = foodService.searchFoodByName(name);
+    public ResponseEntity<List<Food>> searchFoods(Authentication authentication, @RequestParam String name) {
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+        
+        List<Food> foods = foodService.searchFoodByName(name, user.getId());
         return ResponseEntity.ok(foods);
     }
 
     @PostMapping
-    public ResponseEntity<Food> createFood(@Valid @RequestBody Food food) {
-        Food createdFood = foodService.createFood(food);
+    public ResponseEntity<Food> createFood(Authentication authentication, @Valid @RequestBody CreateFoodRequest request) {
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        Food createdFood = foodService.createFood(request.food(), user.getId(), request.isPublic());
         return ResponseEntity.ok(createdFood);
     }
 }

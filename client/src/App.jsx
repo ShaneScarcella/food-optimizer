@@ -8,6 +8,7 @@ import PantryPage from './pages/PantryPage';
 import MealPlanPage from './pages/MealPlanPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import Layout from './components/Layout';
+import LogFoodPage from './pages/LogFoodPage';
 
 function App() {
   return (
@@ -47,6 +48,10 @@ function App() {
           <Route
             path="/analytics"
             element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/log-food"
+            element={<ProtectedRoute><LogFoodPage /></ProtectedRoute>}
           />
         </Routes>
       </Layout>

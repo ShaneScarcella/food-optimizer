@@ -1,15 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import FoodSearch from '../components/FoodSearch';
-import CreateFoodForm from '../components/CreateFoodForm';
-import DailyLog from '../components/DailyLog';
 import apiClient from '../services/apiService';
 
 function DashboardPage() {
-  const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState(null);
-  const [logRefreshKey, setLogRefreshKey] = useState(0); // Key to force re-render of DailyLog
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -23,15 +17,6 @@ function DashboardPage() {
     fetchUserProfile();
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const handleFoodLogged = () => {
-    setLogRefreshKey(prevKey => prevKey + 1);
-  };
-
   if (!userProfile) {
     return <div>Loading...</div>;
   }
@@ -39,12 +24,7 @@ function DashboardPage() {
   return (
     <div>
       <h1>Dashboard - Welcome, {userProfile.firstName}!</h1>
-      
-      <hr />
-
-      <DailyLog key={logRefreshKey} />
-      <FoodSearch onFoodLogged={handleFoodLogged} />
-      <CreateFoodForm />
+      <p>This is your dashboard where you can get a quick overview of your nutrition and activities.</p>
     </div>
   );
 }

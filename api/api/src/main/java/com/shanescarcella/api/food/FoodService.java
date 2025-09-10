@@ -10,12 +10,16 @@ public class FoodService {
 
     private final FoodRepository foodRepository;
 
-    public Food createFood(Food food) {
-        // In a real application, we might add checks here to prevent duplicate food entries
+    public Food createFood(Food food, String userId, boolean isPublic) {
+        if (!isPublic) {
+            food.setCreatedByUserId(userId);
+        }
+        // If it is public, createdByUserId remains null
         return foodRepository.save(food);
     }
 
-    public List<Food> searchFoodByName(String name) {
-        return foodRepository.findByNameContainingIgnoreCase(name);
+    public List<Food> searchFoodByName(String name, String userId) {
+        // Find foods where the name matches AND (the food is global OR created by the current user)
+        return foodRepository.findByNameContainingIgnoreCaseAndCreatedByUserIdOrCreatedByUserIdIsNull(name, userId);
     }
 }

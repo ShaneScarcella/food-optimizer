@@ -10,6 +10,7 @@ function CreateFoodForm() {
     fat: '',
     servingSize: ''
   });
+  const [isPublic, setIsPublic] = useState(true);
   const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
@@ -24,9 +25,8 @@ function CreateFoodForm() {
     e.preventDefault();
     setMessage('');
     try {
-      await apiClient.post('/foods', formData);
+      await apiClient.post('/foods', { food: formData, isPublic: isPublic });
       setMessage(`Successfully added ${formData.name}!`);
-      // Clears form after submission
       setFormData({
         name: '', calories: '', protein: '', carbs: '', fat: '', servingSize: ''
       });
@@ -46,6 +46,18 @@ function CreateFoodForm() {
         <input type="number" name="carbs" value={formData.carbs} onChange={handleChange} placeholder="Carbs (g)" required />
         <input type="number" name="fat" value={formData.fat} onChange={handleChange} placeholder="Fat (g)" required />
         <input type="text" name="servingSize" value={formData.servingSize} onChange={handleChange} placeholder="Serving Size (e.g., 100g)" />
+
+        <div>
+          <label>
+            <input 
+              type="checkbox" 
+              checked={isPublic} 
+              onChange={(e) => setIsPublic(e.target.checked)}
+            />
+             Make this food available to all users?
+          </label>
+        </div>
+        
         <button type="submit">Add Food</button>
       </form>
       {message && <p>{message}</p>}
