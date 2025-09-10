@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
 import apiClient from '../services/apiService';
 
 function DashboardPage() {
@@ -24,7 +23,10 @@ function DashboardPage() {
   return (
     <div>
       <h1>Dashboard - Welcome, {userProfile.firstName}!</h1>
-      <p>This is your dashboard where you can get a quick overview of your nutrition and activities.</p>
+      <hr />
+      <h2>Your Progress at a Glance</h2>
+      <p>This is your main dashboard. Future widgets with analytics and summaries will go here.</p>
+      <p>Your current primary goal is: <strong>{userProfile.primaryGoal}</strong>.</p>
     </div>
   );
 }
