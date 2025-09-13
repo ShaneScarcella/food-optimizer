@@ -9,6 +9,7 @@ import MealPlanPage from './pages/MealPlanPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import Layout from './components/Layout';
 import LogFoodPage from './pages/LogFoodPage';
+import RecipesPage from './pages/RecipesPage';
 
 function App() {
   return (
@@ -52,6 +53,10 @@ function App() {
           <Route
             path="/log-food"
             element={<ProtectedRoute><LogFoodPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/recipes"
+            element={<ProtectedRoute><RecipesPage /></ProtectedRoute>}
           />
         </Routes>
       </Layout>
