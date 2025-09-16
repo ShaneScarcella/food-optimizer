@@ -18,7 +18,7 @@ function CreateRecipeForm() {
   useEffect(() => {
     const fetchPantryFoods = async () => {
       try {
-        const response = await apiClient.get('/api/foods/pantry');
+        const response = await apiClient.get('/foods/pantry');
         setPantryFoods(response.data);
       } catch (error) {
         console.error('Failed to fetch pantry foods:', error);
