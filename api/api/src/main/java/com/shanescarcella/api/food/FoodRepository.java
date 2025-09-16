@@ -10,4 +10,7 @@ public interface FoodRepository extends MongoRepository<Food, String> {
     // and either createdByUserId matches the given userId or is null (public food)
     @Query("{ 'name': { '$regex': ?0, '$options': 'i' }, '$or': [ { 'createdByUserId': ?1 }, { 'createdByUserId': null } ] }")
     List<Food> findByNameContainingIgnoreCaseAndCreatedByUserIdOrCreatedByUserIdIsNull(String name, String userId);
+
+    // Finds foods where the name is in the provided list of names
+    List<Food> findByNameIn(List<String> names);
 }

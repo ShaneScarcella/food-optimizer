@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/foods")
@@ -36,5 +37,19 @@ public class FoodController {
 
         Food createdFood = foodService.createFood(request.food(), user.getId(), request.isPublic());
         return ResponseEntity.ok(createdFood);
+    }
+
+    @GetMapping("/pantry")
+    public ResponseEntity<List<Food>> getPantryFoods(Authentication authentication) {
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+        
+        if (user.getPantryItems() == null || user.getPantryItems().isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        List<Food> pantryFoods = foodService.findFoodsByNames(user.getPantryItems());
+        return ResponseEntity.ok(pantryFoods);
     }
 }

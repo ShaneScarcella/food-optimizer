@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import apiClient from '../services/apiService';
 
 function CreateRecipeForm() {
@@ -11,7 +11,21 @@ function CreateRecipeForm() {
   const [ingredients, setIngredients] = useState([]);
   const [foodSearchTerm, setFoodSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [pantryFoods, setPantryFoods] = useState([]);
   const [message, setMessage] = useState('');
+
+  // Fetch pantry foods when the component loads
+  useEffect(() => {
+    const fetchPantryFoods = async () => {
+      try {
+        const response = await apiClient.get('/api/foods/pantry');
+        setPantryFoods(response.data);
+      } catch (error) {
+        console.error('Failed to fetch pantry foods:', error);
+      }
+    };
+    fetchPantryFoods();
+  }, []);
 
   const handleRecipeChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +45,6 @@ function CreateRecipeForm() {
   const addIngredient = (food) => {
     // Prevent adding the same ingredient twice
     if (ingredients.some(ing => ing.foodId === food.id)) return;
-    
     setIngredients(prev => [...prev, { foodId: food.id, name: food.name, quantity: 1, unit: 'serving' }]);
     setFoodSearchTerm('');
     setSearchResults([]);
@@ -50,13 +63,10 @@ function CreateRecipeForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
-    
     const recipePayload = {
       ...recipe,
-      // Only need to send the backend what it expects for an Ingredient
       ingredients: ingredients.map(({ foodId, quantity, unit }) => ({ foodId, quantity: parseFloat(quantity), unit })),
     };
-
     try {
       await apiClient.post('/recipes', recipePayload);
       setMessage(`Recipe "${recipe.name}" created successfully!`);
@@ -68,7 +78,6 @@ function CreateRecipeForm() {
     }
   };
 
-
   return (
     <div style={styles.formContainer}>
       <h2>Create New Recipe</h2>
@@ -79,9 +88,23 @@ function CreateRecipeForm() {
         <textarea name="instructions" value={recipe.instructions} onChange={handleRecipeChange} placeholder="Cooking Instructions" style={styles.textarea}></textarea>
         <input type="number" name="servings" value={recipe.servings} onChange={handleRecipeChange} placeholder="Servings" min="1" required style={styles.input} />
 
+        {/* Display Pantry Staples */}
+        {pantryFoods.length > 0 && (
+          <div style={styles.pantryContainer}>
+            <h4 style={{ margin: '0 0 10px 0' }}>Your Pantry Staples</h4>
+            <div style={styles.pantryItems}>
+              {pantryFoods.map(food => (
+                <button key={food.id} type="button" onClick={() => addIngredient(food)} style={styles.pantryButton}>
+                  + {food.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        
         {/* Ingredient Search */}
         <div style={styles.searchContainer}>
-          <input type="text" value={foodSearchTerm} onChange={(e) => setFoodSearchTerm(e.target.value)} placeholder="Search for ingredients..." style={{...styles.input, flexGrow: 1}}/>
+          <input type="text" value={foodSearchTerm} onChange={(e) => setFoodSearchTerm(e.target.value)} placeholder="Search for other ingredients..." style={{...styles.input, flexGrow: 1}}/>
           <button type="button" onClick={handleFoodSearch} style={styles.button}>Search</button>
         </div>
 
@@ -121,6 +144,9 @@ const styles = {
     form: { display: 'flex', flexDirection: 'column', gap: '1rem' },
     input: { padding: '0.8rem', fontSize: '1rem', backgroundColor: '#1a1a1a', border: '1px solid #555', borderRadius: '8px', color: 'white' },
     textarea: { minHeight: '100px', padding: '0.8rem', fontSize: '1rem', backgroundColor: '#1a1a1a', border: '1px solid #555', borderRadius: '8px', color: 'white', fontFamily: 'inherit' },
+    pantryContainer: { border: '1px solid #555', borderRadius: '8px', padding: '1rem', backgroundColor: '#1a1a1a' },
+    pantryItems: { display: 'flex', flexWrap: 'wrap', gap: '10px' },
+    pantryButton: { padding: '0.5rem 1rem', border: '1px solid #666', borderRadius: '20px', backgroundColor: '#333', color: 'white', cursor: 'pointer' },
     searchContainer: { display: 'flex', gap: '10px' },
     button: { padding: '0.8rem 1.5rem', border: 'none', borderRadius: '8px', backgroundColor: '#555', color: 'white', cursor: 'pointer' },
     searchResultsList: { listStyle: 'none', padding: 0, margin: 0, border: '1px solid #555', borderRadius: '8px', maxHeight: '150px', overflowY: 'auto' },

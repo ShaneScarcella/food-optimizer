@@ -22,4 +22,9 @@ public class FoodService {
         // Find foods where the name matches AND (the food is global OR created by the current user)
         return foodRepository.findByNameContainingIgnoreCaseAndCreatedByUserIdOrCreatedByUserIdIsNull(name, userId);
     }
+
+    // Used for pantry feature, finds all Food objects with name matching.
+    public List<Food> findFoodsByNames(List<String> names) {
+        return foodRepository.findByNameIn(names);
+    }
 }
