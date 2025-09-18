@@ -1,3 +1,5 @@
+// api/api/src/main/java/com/shanescarcella/api/food/FoodRepository.java
+
 package com.shanescarcella.api.food;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -6,11 +8,6 @@ import java.util.List;
 
 public interface FoodRepository extends MongoRepository<Food, String> {
     
-    // Finds foods where the name contains the search term (case-insensitive)
-    // and either createdByUserId matches the given userId or is null (public food)
     @Query("{ 'name': { '$regex': ?0, '$options': 'i' }, '$or': [ { 'createdByUserId': ?1 }, { 'createdByUserId': null } ] }")
-    List<Food> findByNameContainingIgnoreCaseAndCreatedByUserIdOrCreatedByUserIdIsNull(String name, String userId);
-
-    // Finds foods where the name is in the provided list of names
-    List<Food> findByNameIn(List<String> names);
+    List<Food> findByNameContainingIgnoreCaseAndCreatedByUserIdIsNullOrCreatedByUserId(String name, String userId);
 }

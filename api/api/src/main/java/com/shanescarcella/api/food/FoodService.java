@@ -1,3 +1,5 @@
+// api/api/src/main/java/com/shanescarcella/api/food/FoodService.java
+
 package com.shanescarcella.api.food;
 
 import lombok.RequiredArgsConstructor;
@@ -14,17 +16,14 @@ public class FoodService {
         if (!isPublic) {
             food.setCreatedByUserId(userId);
         }
-        // If it is public, createdByUserId remains null
         return foodRepository.save(food);
     }
 
-    public List<Food> searchFoodByName(String name, String userId) {
-        // Find foods where the name matches AND (the food is global OR created by the current user)
-        return foodRepository.findByNameContainingIgnoreCaseAndCreatedByUserIdOrCreatedByUserIdIsNull(name, userId);
+    public List<Food> searchFoods(String name, String userId) {
+        return foodRepository.findByNameContainingIgnoreCaseAndCreatedByUserIdIsNullOrCreatedByUserId(name, userId);
     }
 
-    // Used for pantry feature, finds all Food objects with name matching.
-    public List<Food> findFoodsByNames(List<String> names) {
-        return foodRepository.findByNameIn(names);
+    public List<Food> findFoodsByIds(List<String> foodIds) {
+        return foodRepository.findAllById(foodIds);
     }
 }

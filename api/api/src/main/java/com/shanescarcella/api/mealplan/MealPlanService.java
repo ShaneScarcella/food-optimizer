@@ -23,13 +23,14 @@ public class MealPlanService {
             return new WeeklyMealPlan(Collections.emptyList());
         }
 
-        // Separate foods into two lists: pantry items and non-pantry items
-        List<String> pantryItems = user.getPantryItems() != null ? user.getPantryItems() : Collections.emptyList();
+        // Filter pantry foods by ID
+        List<String> pantryItemIds = user.getPantryItems() != null ? user.getPantryItems() : Collections.emptyList();
         List<Food> pantryFoods = allFoods.stream()
-                .filter(food -> pantryItems.stream().anyMatch(pantryItem -> food.getName().equalsIgnoreCase(pantryItem)))
+                .filter(food -> pantryItemIds.contains(food.getId()))
                 .collect(Collectors.toList());
+                
         List<Food> otherFoods = allFoods.stream()
-                .filter(food -> pantryFoods.stream().noneMatch(pantryFood -> pantryFood.getId().equals(food.getId())))
+                .filter(food -> !pantryItemIds.contains(food.getId()))
                 .collect(Collectors.toList());
 
         List<DailyMealPlan> dailyPlans = new ArrayList<>();

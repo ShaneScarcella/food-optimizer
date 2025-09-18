@@ -25,7 +25,7 @@ public class FoodController {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
         
-        List<Food> foods = foodService.searchFoodByName(name, user.getId());
+        List<Food> foods = foodService.searchFoods(name, user.getId());
         return ResponseEntity.ok(foods);
     }
 
@@ -49,7 +49,7 @@ public class FoodController {
             return ResponseEntity.ok(Collections.emptyList());
         }
 
-        List<Food> pantryFoods = foodService.findFoodsByNames(user.getPantryItems());
+        List<Food> pantryFoods = foodService.findFoodsByIds(user.getPantryItems());
         return ResponseEntity.ok(pantryFoods);
     }
 }
