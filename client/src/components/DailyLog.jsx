@@ -5,20 +5,20 @@ function DailyLog() {
   const [log, setLog] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Get and format the current date
-  const today = new Date();
+  const todayISO = new Date().toISOString().split('T')[0];
+  const displayDate = new Date(todayISO + 'T00:00:00'); // Adjusts for timezone differences
+
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  const formattedDate = today.toLocaleDateString(undefined, options);
+  const formattedDate = displayDate.toLocaleDateString(undefined, options);
 
   useEffect(() => {
     const fetchLog = async () => {
-      const today = new Date().toISOString().split('T')[0]; // Date in YYYY-MM-DD format
       try {
-        const response = await apiClient.get(`/logs?date=${today}`);
+        const response = await apiClient.get(`/logs?date=${todayISO}`);
         setLog(response.data);
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          setLog({ entries: [] }); // Is nothing logged for today
+          setLog({ entries: [] }); // Sets empty log if none exists
         } else {
           console.error("Failed to fetch daily log", error);
         }
@@ -28,7 +28,7 @@ function DailyLog() {
     };
 
     fetchLog();
-  }, [today]);
+  }, [todayISO]);
 
   if (isLoading) {
     return <p>Loading log...</p>;
