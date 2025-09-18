@@ -10,6 +10,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import Layout from './components/Layout';
 import LogFoodPage from './pages/LogFoodPage';
 import RecipesPage from './pages/RecipesPage';
+import DatabasePage from './pages/DatabasePage';
 
 function App() {
   return (
@@ -55,8 +56,8 @@ function App() {
             element={<ProtectedRoute><LogFoodPage /></ProtectedRoute>}
           />
           <Route
-            path="/recipes"
-            element={<ProtectedRoute><RecipesPage /></ProtectedRoute>}
+            path="/database"
+            element={<ProtectedRoute><DatabasePage /></ProtectedRoute>}
           />
         </Routes>
       </Layout>

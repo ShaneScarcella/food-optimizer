@@ -23,7 +23,7 @@ function Navbar() {
             <Link to="/pantry" style={linkStyle}>Pantry</Link>
             <Link to="/analytics" style={linkStyle}>Analytics</Link>
             <Link to="/log-food" style={linkStyle}>Log Food</Link>
-            <Link to="/recipes" style={linkStyle}>Recipes</Link>
+            <Link to="/database" style={linkStyle}>Database</Link>
           </>
         )}
       </div>

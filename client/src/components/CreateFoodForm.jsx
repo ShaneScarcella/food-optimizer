@@ -38,7 +38,7 @@ function CreateFoodForm() {
 
   return (
     <div>
-      <h3>Add a New Food</h3>
+      <h3>Register a New Food</h3>
       <form onSubmit={handleSubmit}>
         <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Food Name" required />
         <input type="number" name="calories" value={formData.calories} onChange={handleChange} placeholder="Calories" required />
@@ -54,7 +54,7 @@ function CreateFoodForm() {
               checked={isPublic} 
               onChange={(e) => setIsPublic(e.target.checked)}
             />
-             Make this food available to all users?
+            <span> Make this food available to all users?</span>
           </label>
         </div>
         
