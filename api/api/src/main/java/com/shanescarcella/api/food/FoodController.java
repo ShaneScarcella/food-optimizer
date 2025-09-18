@@ -52,4 +52,14 @@ public class FoodController {
         List<Food> pantryFoods = foodService.findFoodsByIds(user.getPantryItems());
         return ResponseEntity.ok(pantryFoods);
     }
+
+    @GetMapping("/all-foods")
+    public ResponseEntity<List<Food>> getAllUserFoods(Authentication authentication) {
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+        
+        List<Food> foods = foodService.getAllFoodsForUser(user.getId());
+        return ResponseEntity.ok(foods);
+    }
 }

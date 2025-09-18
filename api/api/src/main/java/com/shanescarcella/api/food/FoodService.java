@@ -1,5 +1,3 @@
-// api/api/src/main/java/com/shanescarcella/api/food/FoodService.java
-
 package com.shanescarcella.api.food;
 
 import lombok.RequiredArgsConstructor;
@@ -25,5 +23,10 @@ public class FoodService {
 
     public List<Food> findFoodsByIds(List<String> foodIds) {
         return foodRepository.findAllById(foodIds);
+    }
+
+    // Gets all foods available to the user (both their own and global)
+    public List<Food> getAllFoodsForUser(String userId) {
+        return foodRepository.findAllByUserIdOrGlobal(userId);
     }
 }

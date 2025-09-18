@@ -1,20 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import apiClient from '../services/apiService';
+import { useAuth } from '../context/AuthContext';
 
 function FoodSearch({ onFoodLogged }) {
+  const { token } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [allFoods, setAllFoods] = useState([]); // Holds the master list of all foods
+  const [filteredFoods, setFilteredFoods] = useState([]); // Holds the foods that match the search term
   const [error, setError] = useState('');
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    setError('');
-    try {
-      const response = await apiClient.get(`/foods/search?name=${searchTerm}`);
-      setSearchResults(response.data);
-    } catch (err) {
-      setError('Failed to search for foods.');
-      console.error(err);
+  // Fetch all available foods when the component loads
+  useEffect(() => {
+    if (token) {
+      const fetchAllFoods = async () => {
+        try {
+          const response = await apiClient.get('/foods/all-foods');
+          setAllFoods(response.data);
+          setFilteredFoods(response.data); // Initially, show all foods
+        } catch (err) {
+          setError('Failed to load your food list.');
+          console.error(err);
+        }
+      };
+      fetchAllFoods();
+    }
+  }, [token]);
+
+  // Filter the list in real-time as the user types
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+
+    if (!term) {
+      setFilteredFoods(allFoods); // If search is empty, show all foods
+    } else {
+      const lowercasedTerm = term.toLowerCase();
+      const filtered = allFoods.filter(food => 
+        food.name.toLowerCase().includes(lowercasedTerm)
+      );
+      setFilteredFoods(filtered);
     }
   };
 
@@ -22,21 +46,19 @@ function FoodSearch({ onFoodLogged }) {
     const entry = {
       foodId: food.id,
       name: food.name,
-      servingQty: 1, // Default serving of 1, can be adjusted later
+      servingQty: 1,
       servingSize: food.servingSize,
       calories: food.calories
     };
 
-    // Create a date object based on the user's local time
     const localDate = new Date();
-    // YYYY-MM-DD
     const today = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
 
     try {
       await apiClient.post('/logs/entry', { entry: entry, date: today });
       onFoodLogged();
-      setSearchResults([]);
-      setSearchTerm('');
+      setSearchTerm(''); // Clear search after logging
+      setFilteredFoods(allFoods); // Reset list to show all foods
     } catch (err) {
       setError('Failed to log food.');
       console.error(err);
@@ -45,20 +67,18 @@ function FoodSearch({ onFoodLogged }) {
 
   return (
     <div>
-      <h3>Search for a Food</h3>
-      <form onSubmit={handleSearch}>
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="e.g., Chicken Breast"
-        />
-        <button type="submit">Search</button>
-      </form>
+      <h3>Search Your Foods</h3>
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        placeholder="Type to filter your foods..."
+        style={{ width: '100%', padding: '0.8rem', fontSize: '1rem' }}
+      />
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        {searchResults.map(food => (
-          <div key={food.id}>
+      <div style={{ maxHeight: '300px', overflowY: 'auto', marginTop: '1rem' }}>
+        {filteredFoods.map(food => (
+          <div key={food.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', borderBottom: '1px solid #444' }}>
             <span>{food.name} - {food.calories} kcal</span>
             <button onClick={() => handleLogFood(food)}>Log</button>
           </div>
