@@ -27,7 +27,10 @@ function FoodSearch({ onFoodLogged }) {
       calories: food.calories
     };
 
-    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+    // Create a date object based on the user's local time
+    const localDate = new Date();
+    // YYYY-MM-DD
+    const today = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
 
     try {
       await apiClient.post('/logs/entry', { entry: entry, date: today });

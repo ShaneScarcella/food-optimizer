@@ -5,11 +5,15 @@ function DailyLog() {
   const [log, setLog] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const todayISO = new Date().toISOString().split('T')[0];
-  const displayDate = new Date(todayISO + 'T00:00:00'); // Adjusts for timezone differences
+  // Create a date object based on the user's local time
+  const localDate = new Date();
 
+  // Construct YYYY-MM-DD string
+  const todayISO = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
+  
+  // Use local date for display
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  const formattedDate = displayDate.toLocaleDateString(undefined, options);
+  const formattedDate = localDate.toLocaleDateString(undefined, options);
 
   useEffect(() => {
     const fetchLog = async () => {
