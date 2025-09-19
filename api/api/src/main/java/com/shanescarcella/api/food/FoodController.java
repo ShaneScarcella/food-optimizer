@@ -62,4 +62,19 @@ public class FoodController {
         List<Food> foods = foodService.getAllFoodsForUser(user.getId());
         return ResponseEntity.ok(foods);
     }
+
+    // Fetches foods that the user has specifically added to their "My Foods" list
+    @GetMapping("/my-foods")
+    public ResponseEntity<List<Food>> getMyFoods(Authentication authentication) {
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        if (user.getMyFoodIds() == null || user.getMyFoodIds().isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        List<Food> myFoods = foodService.findFoodsByIds(user.getMyFoodIds());
+        return ResponseEntity.ok(myFoods);
+    }
 }
