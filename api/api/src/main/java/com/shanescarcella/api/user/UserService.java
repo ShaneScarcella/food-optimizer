@@ -63,4 +63,28 @@ public class UserService {
 
         return userRepository.save(existingUser);
     }
+
+    // Add a food to the user's personal list
+    public User addFoodToMyFoods(String email, String foodId) {
+        User existingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("User not found."));
+
+        if (!existingUser.getMyFoodIds().contains(foodId)) {
+            existingUser.getMyFoodIds().add(foodId);
+            userRepository.save(existingUser);
+        }
+
+        return existingUser;
+    }
+
+    // Remove a food from the user's personal list
+    public User removeFoodFromMyFoods(String email, String foodId) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("User not found."));
+
+        user.getMyFoodIds().remove(foodId);
+        userRepository.save(user);
+        
+        return user;
+    }
 }

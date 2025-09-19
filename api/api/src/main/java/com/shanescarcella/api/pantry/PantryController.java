@@ -22,7 +22,7 @@ public class PantryController {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
-        user.setPantryItems(pantryItems);
+        user.setPantryItemIds(pantryItems);
         User updatedUser = userRepository.save(user);
 
         return ResponseEntity.ok(updatedUser);

@@ -25,7 +25,6 @@ public class FoodService {
         return foodRepository.findAllById(foodIds);
     }
 
-    // Gets all foods available to the user (both their own and global)
     public List<Food> getAllFoodsForUser(String userId) {
         return foodRepository.findAllByUserIdOrGlobal(userId);
     }

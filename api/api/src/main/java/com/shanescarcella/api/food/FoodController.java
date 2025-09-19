@@ -45,11 +45,11 @@ public class FoodController {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
         
-        if (user.getPantryItems() == null || user.getPantryItems().isEmpty()) {
+        if (user.getPantryItemIds() == null || user.getPantryItemIds().isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
         }
 
-        List<Food> pantryFoods = foodService.findFoodsByIds(user.getPantryItems());
+        List<Food> pantryFoods = foodService.findFoodsByIds(user.getPantryItemIds());
         return ResponseEntity.ok(pantryFoods);
     }
 

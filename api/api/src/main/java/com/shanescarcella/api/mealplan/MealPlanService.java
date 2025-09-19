@@ -24,7 +24,7 @@ public class MealPlanService {
         }
 
         // Filter pantry foods by ID
-        List<String> pantryItemIds = user.getPantryItems() != null ? user.getPantryItems() : Collections.emptyList();
+        List<String> pantryItemIds = user.getPantryItemIds() != null ? user.getPantryItemIds() : Collections.emptyList();
         List<Food> pantryFoods = allFoods.stream()
                 .filter(food -> pantryItemIds.contains(food.getId()))
                 .collect(Collectors.toList());

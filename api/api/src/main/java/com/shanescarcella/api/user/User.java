@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -59,5 +61,10 @@ public class User {
     private List<String> dietaryPreferences;
     private List<String> allergies;
 
-    private List<String> pantryItems;
+    @Builder.Default
+    private List<String> pantryItemIds = new ArrayList<>();
+
+    // Foods that user has added to their personal collection
+    @Builder.Default
+    private List<String> myFoodIds = new ArrayList<>();
 }
