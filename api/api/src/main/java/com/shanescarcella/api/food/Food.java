@@ -21,8 +21,9 @@ public class Food {
 
     @NotBlank(message = "Food name is required.")
     private String name;
+    
+    private String brand;
 
-    // Nutrition
     @NotNull(message = "Calories are required.")
     private Double calories;
 
@@ -35,8 +36,20 @@ public class Food {
     @NotNull(message = "Fat is required.")
     private Double fat;
 
-    // "100g", "1 cup", "1 piece"
+    // e.g., "100g", "1 cup", "1 piece"
     private String servingSize;
 
+    // Null for global, userId for personal
     private String createdByUserId;
+
+    // Optional Extra Information
+    private Double fiber;
+    private Double sugar;
+    private Double saturatedFat;
+    private Double sodium; // in mg
+    private Double potassium; // in mg
+    private Double calcium; // in mg
+    private Double iron; // in mg
+    private Double vitaminC; // in mg
+    private Double vitaminD; // in IU
 }
