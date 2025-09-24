@@ -9,7 +9,7 @@ import MealPlanPage from './pages/MealPlanPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import Layout from './components/Layout';
 import LogFoodPage from './pages/LogFoodPage';
-import RecipesPage from './pages/RecipesPage';
+import MyCookbookPage from './pages/MyCookbookPage';
 import DatabasePage from './pages/DatabasePage';
 
 function App() {
@@ -19,29 +19,18 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+
           <Route
             path="/"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
+            element={<ProtectedRoute><DashboardPage /></ProtectedRoute>}
           />
           <Route
             path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
+            element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
           />
           <Route
             path="/pantry"
-            element={
-              <ProtectedRoute>
-                <PantryPage />
-              </ProtectedRoute>
-            }
+            element={<ProtectedRoute><PantryPage /></ProtectedRoute>}
           />
           <Route
             path="/meal-plan"
@@ -59,6 +48,11 @@ function App() {
             path="/database"
             element={<ProtectedRoute><DatabasePage /></ProtectedRoute>}
           />
+          <Route
+            path="/my-cookbook"
+            element={<ProtectedRoute><MyCookbookPage /></ProtectedRoute>}
+          />
+          "
         </Routes>
       </Layout>
     </BrowserRouter>

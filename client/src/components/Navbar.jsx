@@ -17,14 +17,14 @@ function Navbar() {
       </div>
       <div style={navCenter}>
         {token && (
-          <>
-            <Link to="/" style={linkStyle}>Dashboard</Link>
+        <>
+            <Link to="/log-food" style={linkStyle}>Log Food</Link>
+            <Link to="/my-cookbook" style={linkStyle}>My Cookbook</Link>
+            <Link to="/database" style={linkStyle}>Database</Link>
             <Link to="/meal-plan" style={linkStyle}>Meal Plan</Link>
             <Link to="/pantry" style={linkStyle}>Pantry</Link>
             <Link to="/analytics" style={linkStyle}>Analytics</Link>
-            <Link to="/log-food" style={linkStyle}>Log Food</Link>
-            <Link to="/database" style={linkStyle}>Database</Link>
-          </>
+        </>
         )}
       </div>
       <div style={navRight}>
