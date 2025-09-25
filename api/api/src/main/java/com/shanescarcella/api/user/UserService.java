@@ -87,4 +87,28 @@ public class UserService {
         
         return user;
     }
+
+    
+    // Add a recipe ID to the user's personal "My Recipes" list
+    public User addRecipeToMyRecipes(String email, String recipeId) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalStateException("User not found."));
+
+        if (!user.getMyRecipeIds().contains(recipeId)) {
+            user.getMyRecipeIds().add(recipeId);
+            userRepository.save(user);
+        }
+        return user;
+    }
+
+    // Remove a recipe ID from the user's personal "My Recipes" list
+    public User removeRecipeFromMyRecipes(String email, String recipeId) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalStateException("User not found."));
+
+        user.getMyRecipeIds().remove(recipeId);
+        userRepository.save(user);
+
+        return user;
+    }
 }

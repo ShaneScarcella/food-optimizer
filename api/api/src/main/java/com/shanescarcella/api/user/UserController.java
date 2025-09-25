@@ -47,4 +47,21 @@ public class UserController {
         User updatedUser = userService.removeFoodFromMyFoods(userEmail, foodId);
         return ResponseEntity.ok(updatedUser);
     }
+
+    // Endpoint to add a recipe to the user's personal collection
+    @PostMapping("/me/my-recipes")
+    public ResponseEntity<User> addRecipeToMyRecipes(Authentication authentication, @RequestBody Map<String, String> payload) {
+        String userEmail = authentication.getName();
+        String recipeId = payload.get("recipeId");
+        User updatedUser = userService.addRecipeToMyRecipes(userEmail, recipeId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    // Endpoint to remove a recipe from the user's personal collection
+    @DeleteMapping("/me/my-recipes/{recipeId}")
+    public ResponseEntity<User> removeRecipeFromMyRecipes(Authentication authentication, @PathVariable String recipeId) {
+        String userEmail = authentication.getName();
+        User updatedUser = userService.removeRecipeFromMyRecipes(userEmail, recipeId);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

@@ -67,4 +67,7 @@ public class User {
     // Foods that user has added to their personal collection
     @Builder.Default
     private List<String> myFoodIds = new ArrayList<>();
+
+    @Builder.Default
+    private List<String> myRecipeIds = new ArrayList<>();
 }

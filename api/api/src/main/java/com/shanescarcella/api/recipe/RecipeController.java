@@ -27,4 +27,21 @@ public class RecipeController {
         
         return new ResponseEntity<>(createdRecipe, HttpStatus.CREATED);
     }
+
+    @PutMapping("/{recipeId}")
+    public ResponseEntity<Recipe> updateRecipe(
+        @PathVariable String recipeId,
+        @Valid @RequestBody Recipe updatedRecipe,
+        Authentication authentication
+    ) {
+        User user = getUser(authentication);
+        Recipe savedRecipe = recipeService.updateRecipe(recipeId, updatedRecipe, user);
+        return ResponseEntity.ok(savedRecipe);
+    }
+
+    private User getUser(Authentication authentication) {
+        String userEmail = authentication.getName();
+        return userRepository.findByEmail(userEmail)
+            .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+    }
 }
