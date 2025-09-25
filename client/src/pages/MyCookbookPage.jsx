@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../services/apiService';
 import { useAuth } from '../context/AuthContext';
+import EditFoodModal from '../components/EditFoodModal';
 
 function MyCookbookPage() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [myFoods, setMyFoods] = useState([]);
   const [metadata, setMetadata] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [message, setMessage] = useState('');
+  const [selectedFood, setSelectedFood] = useState(null);
 
   // Fetch both foods and their metadata
   useEffect(() => {
@@ -15,8 +16,10 @@ function MyCookbookPage() {
       const fetchData = async () => {
         setIsLoading(true);
         try {
-          const foodsResponse = await apiClient.get('/foods/my-foods');
-          const metadataResponse = await apiClient.get('/metadata');
+          const [foodsResponse, metadataResponse] = await Promise.all([
+            apiClient.get('/foods/my-foods'),
+            apiClient.get('/metadata')
+          ]);
           
           setMyFoods(foodsResponse.data);
 
@@ -37,39 +40,45 @@ function MyCookbookPage() {
     }
   }, [token]);
 
-  // Handle changes to the personal info fields
-  const handleMetadataChange = (foodId, field, value) => {
-    setMetadata(prev => ({
-      ...prev,
-      [foodId]: {
-        ...prev[foodId],
-        foodId: foodId, // Ensure foodId is set
-        [field]: value
+  const handleOpenEditModal = (food) => {
+    setSelectedFood(food);
+  };
+
+  const handleCloseEditModal = () => {
+    setSelectedFood(null);
+  };
+
+  const handleSave = (updatedFood, updatedMetadata) => {
+    // Update the food list in the UI
+    setMyFoods(prevFoods => {
+      // If a new food was created (copy-on-edit), the ID will have changed
+      const index = prevFoods.findIndex(f => f.id === selectedFood.id);
+      if (index !== -1) {
+          const newFoods = [...prevFoods];
+          newFoods[index] = updatedFood;
+          return newFoods;
       }
+      return prevFoods;
+    });
+
+    // Update the metadata map
+    setMetadata(prevMeta => ({
+        ...prevMeta,
+        [updatedFood.id]: updatedMetadata
     }));
   };
-
-  // Save the updated metadata for a single food item
-  const handleSaveMetadata = async (foodId) => {
-    const foodMetadata = metadata[foodId];
-    if (!foodMetadata) return;
-
-    // Ensure price is a number
-    const payload = {
-        ...foodMetadata,
-        lastPrice: parseFloat(foodMetadata.lastPrice) || 0
-    };
-
-    try {
-      const response = await apiClient.post('/metadata', payload);
-      // Update the state with the saved data, which might include a new ID from the DB
-      setMetadata(prev => ({ ...prev, [foodId]: response.data }));
-      setMessage('Details saved!');
-      setTimeout(() => setMessage(''), 2000);
-    } catch (error) {
-      console.error("Failed to save metadata", error);
-    }
+  
+  const handleRemove = async (foodToRemove) => {
+      if (window.confirm(`Are you sure you want to remove "${foodToRemove.name}" from your cookbook?`)) {
+        try {
+            await apiClient.delete(`/users/me/my-foods/${foodToRemove.id}`);
+            setMyFoods(prev => prev.filter(food => food.id !== foodToRemove.id));
+        } catch (error) {
+            console.error("Failed to remove food", error);
+        }
+      }
   };
+
 
   if (isLoading) {
     return <p>Loading your cookbook...</p>;
@@ -78,34 +87,20 @@ function MyCookbookPage() {
   return (
     <div style={styles.container}>
       <h2>My Cookbook</h2>
-      <p>Manage your personal collection of foods and their shopping details.</p>
-      {message && <p style={{ color: '#28a745' }}>{message}</p>}
-
+      <p>Manage your personal collection of foods and recipes. Edit details or remove items you no longer use.</p>
+      
       <div style={styles.list}>
         {myFoods.length > 0 ? myFoods.map(food => {
-          const foodMeta = metadata[food.id] || {};
+          const isPersonal = food.createdByUserId === user?.id; // Check if the food is a personal copy
           return (
             <div key={food.id} style={styles.foodItem}>
-              <div style={styles.foodInfo}>
-                <h4 style={{ margin: 0 }}>{food.name}</h4>
-                <p style={{ margin: '5px 0', color: '#aaa' }}>{food.brand || 'No brand'} - {food.calories} kcal per {food.servingSize}</p>
+              <div>
+                <h4 style={{ margin: 0 }}>{food.name} {isPersonal && <span style={styles.tag}>(Personal)</span>}</h4>
+                <p style={{ margin: '5px 0', color: '#aaa' }}>{food.brand || 'No brand'} - {food.calories} kcal</p>
               </div>
-              <div style={styles.metadataForm}>
-                <input 
-                  type="text" 
-                  placeholder="Preferred Store" 
-                  value={foodMeta.preferredStore || ''}
-                  onChange={(e) => handleMetadataChange(food.id, 'preferredStore', e.target.value)}
-                  style={styles.input}
-                />
-                <input 
-                  type="number" 
-                  placeholder="Last Price" 
-                  value={foodMeta.lastPrice || ''}
-                  onChange={(e) => handleMetadataChange(food.id, 'lastPrice', e.target.value)}
-                  style={styles.input}
-                />
-                <button onClick={() => handleSaveMetadata(food.id)} style={styles.button}>Save</button>
+              <div style={styles.buttonContainer}>
+                <button onClick={() => handleOpenEditModal(food)} style={styles.button}>Edit</button>
+                <button onClick={() => handleRemove(food)} style={styles.removeButton}>Remove</button>
               </div>
             </div>
           )
@@ -113,6 +108,16 @@ function MyCookbookPage() {
           <p>Your cookbook is empty. Add foods from the "Database" page to get started.</p>
         )}
       </div>
+
+      {selectedFood && (
+        <EditFoodModal 
+          food={selectedFood}
+          metadata={metadata[selectedFood.id] || {}}
+          onSave={handleSave}
+          onClose={handleCloseEditModal}
+          userId={user?.id}
+        />
+      )}
     </div>
   );
 }
@@ -120,11 +125,12 @@ function MyCookbookPage() {
 const styles = {
     container: { maxWidth: '900px', width: '100%', padding: '2rem', textAlign: 'center' },
     list: { width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' },
-    foodItem: { backgroundColor: '#1a1a1a', padding: '1rem', borderRadius: '8px', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' },
-    foodInfo: { flex: 1, minWidth: '200px' },
-    metadataForm: { display: 'flex', gap: '10px', alignItems: 'center' },
-    input: { padding: '0.5rem', borderRadius: '5px', border: '1px solid #555', backgroundColor: '#333', color: 'white' },
-    button: { padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', backgroundColor: '#555', color: 'white', cursor: 'pointer' }
+    foodItem: { backgroundColor: '#1a1a1a', padding: '1.5rem', borderRadius: '8px', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' },
+    tag: { fontSize: '0.8rem', backgroundColor: '#555', color: 'white', padding: '2px 6px', borderRadius: '4px', marginLeft: '10px' },
+    buttonContainer: { display: 'flex', gap: '10px' },
+    button: { padding: '0.5rem 1rem', borderRadius: '5px', border: '1px solid #555', backgroundColor: '#333', color: 'white', cursor: 'pointer' },
+    removeButton: { padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', backgroundColor: '#c0392b', color: 'white', cursor: 'pointer' }
 };
+
 
 export default MyCookbookPage;
