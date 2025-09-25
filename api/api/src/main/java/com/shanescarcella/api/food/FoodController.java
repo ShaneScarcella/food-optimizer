@@ -38,19 +38,16 @@ public class FoodController {
         Food createdFood = foodService.createFood(request.food(), user.getId(), request.isPublic());
         return ResponseEntity.ok(createdFood);
     }
-
-    @GetMapping("/pantry")
-    public ResponseEntity<List<Food>> getPantryFoods(Authentication authentication) {
-        String userEmail = authentication.getName();
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new IllegalStateException("User not found"));
-        
-        if (user.getPantryItemIds() == null || user.getPantryItemIds().isEmpty()) {
-            return ResponseEntity.ok(Collections.emptyList());
-        }
-
-        List<Food> pantryFoods = foodService.findFoodsByIds(user.getPantryItemIds());
-        return ResponseEntity.ok(pantryFoods);
+    
+    @PutMapping("/{foodId}")
+    public ResponseEntity<Food> updateFood(
+        @PathVariable String foodId,
+        @Valid @RequestBody Food updatedFood,
+        Authentication authentication
+    ) {
+        User user = getUser(authentication);
+        Food savedFood = foodService.updateFood(foodId, updatedFood, user);
+        return ResponseEntity.ok(savedFood);
     }
 
     @GetMapping("/all-foods")
@@ -66,15 +63,28 @@ public class FoodController {
     // Fetches foods that the user has specifically added to their "My Foods" list
     @GetMapping("/my-foods")
     public ResponseEntity<List<Food>> getMyFoods(Authentication authentication) {
-        String userEmail = authentication.getName();
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new IllegalStateException("User not found"));
-
+        User user = getUser(authentication);
         if (user.getMyFoodIds() == null || user.getMyFoodIds().isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
         }
 
         List<Food> myFoods = foodService.findFoodsByIds(user.getMyFoodIds());
         return ResponseEntity.ok(myFoods);
+    }
+
+    @GetMapping("/pantry")
+    public ResponseEntity<List<Food>> getPantryFoods(Authentication authentication) {
+        User user = getUser(authentication);
+        if (user.getPantryItemIds() == null || user.getPantryItemIds().isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+        List<Food> pantryFoods = foodService.findFoodsByIds(user.getPantryItemIds());
+        return ResponseEntity.ok(pantryFoods);
+    }
+
+    private User getUser(Authentication authentication) {
+        String userEmail = authentication.getName();
+        return userRepository.findByEmail(userEmail)
+            .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
     }
 }
